@@ -5,6 +5,7 @@
   <title>3D RETRO RACERS (final)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
   <link href="common.css" rel="stylesheet" type="text/css" />
+  <audio id="bgmusic" src="./music/racer.mp3" autoplay loop></audio>
 </head> 
 
 <body>                                              
@@ -698,6 +699,7 @@ window.addEventListener("load", function () {
         <p>Made by Aatmodeep</p>
       </div>
     </div>
+
   `;
   document.body.appendChild(intro);
 
@@ -754,6 +756,9 @@ window.addEventListener("load", function () {
         transform: translateY(-120%);
       }
     }
+  #audio {
+   display: none;
+  }
   `;
   document.head.appendChild(style);
 
@@ -777,6 +782,40 @@ window.addEventListener("load", function () {
     }, fadeOutTime);
   }, introDuration);
 });
+//  Intro music fade script
+const bgMusic = document.getElementById("bgmusic");
+bgMusic.volume = 0; // start silent
+
+// when the page loads, start intro music softly
+window.addEventListener("load", () => {
+  bgMusic.play().catch(() => {
+    console.log("Music will start after user interaction (browser policy)");
+  });
+  fadeVolume(bgMusic, 0.5, 3000); // fade in over 3s
+});
+
+//  When intro fades out, also fade out music
+function endIntro() {
+  fadeVolume(bgMusic, 0, 3000); // fade out over 3s
+  setTimeout(() => {
+    bgMusic.pause(); // stop music after fade
+  }, 3000);
+}
+
+// Helper for smooth volume fading
+function fadeVolume(audio, targetVolume, duration) {
+  const steps = 20;
+  const stepTime = duration / steps;
+  const volumeStep = (targetVolume - audio.volume) / steps;
+  const fadeInterval = setInterval(() => {
+    audio.volume = Math.max(0, Math.min(1, audio.volume + volumeStep));
+    if ((volumeStep > 0 && audio.volume >= targetVolume) ||
+        (volumeStep < 0 && audio.volume <= targetVolume)) {
+      clearInterval(fadeInterval);
+    }
+  }, stepTime);
+}
+
 
   </script>
 
